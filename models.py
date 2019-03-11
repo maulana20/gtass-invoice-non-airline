@@ -1,6 +1,12 @@
-import xlrd
 from datetime import datetime
 from datetime import time
+
+from urllib.request import urlopen
+from bs4 import BeautifulSoup
+
+import xlrd
+import requests
+
 
 class PExcelModel():
 	def __init__(self, file_dir):
@@ -31,7 +37,7 @@ class PExcelModel():
 						data = int(data) if type(data) is float else data
 						data = datetime.fromordinal(datetime(1900, 1, 1).toordinal() + data - 2)
 					column[title[curr_col]] = data
-				else :
+				else:
 					data = int(data) if type(data) is float else data
 					column[title[curr_col]] = data
 			record.append(column)
@@ -43,3 +49,34 @@ class PExcelModel():
 	
 	def title(self):
 		return self.title
+
+class GTASSModel():
+	def __init__(self, url, username, password):
+		self.request = requests.Session()
+		self.url = url
+		self.username = username
+		self.password = password
+		
+		self.login()
+	
+	def login(self):
+		try:
+			response = self.request.post(self.url + '/login', data = {'username': self.username, 'password': self.password})
+			result = response.text
+			
+			# bs = BeautifulSoup(result.read(), 'html.parser')
+			# body = bs.find('li')
+			
+			fo = open('log/gtass_login.html', 'w')
+			fo.write(result)
+			fo.close()
+			
+			# return body
+		except:
+			result = 'login failed !'
+			
+			fo = open('log/gtass_login.html', 'w')
+			fo.write(result)
+			fo.close()
+		
+		return False

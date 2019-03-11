@@ -1,7 +1,8 @@
 import os
 import sys
+import json
 
-from models import PExcelModel
+from models import PExcelModel, GTASSModel
 
 def getKonsorsiumName(i):
 	konsorsium_list = ['KAI']
@@ -69,6 +70,13 @@ for data in record:
 confirm = input('Simpan data ? (Y/N)\n')
 
 if confirm == 'Y' or confirm == 'y':
+	config = open('config/gtass.txt', 'r')
+	config = config.readlines(0)
+	params = json.loads(config[0])
+	
+	gtass = GTASSModel(params['url'], params['username'], params['password'])
+	print(gtass)
+	
 	print('running')
 else :
 	sys.exit()
