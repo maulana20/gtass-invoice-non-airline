@@ -3,6 +3,22 @@ import sys
 
 from models import PExcelModel
 
+print('**************************************')
+print('* Konsorsium yang di pilih           *')
+print('**************************************')
+print('* 1. KAI                             *')
+print('**************************************')
+
+konsorsium_choice = input('> ')
+
+if not konsorsium_choice:
+	print('result : Konsorsium harus di pilih tidak boleh kosong !')
+	sys.exit()
+
+if konsorsium_choice not in ['1']:
+	print('result : Konsorsium yang di pilih tidak ada !')
+	sys.exit()
+
 file_name = input('Nama File : \n')
 
 if not file_name:
