@@ -7,6 +7,8 @@ from bs4 import BeautifulSoup
 import xlrd
 import requests
 
+import json
+
 
 class PExcelModel():
 	def __init__(self, file_dir):
@@ -57,8 +59,11 @@ class GTASSModel():
 		self.username = username
 		self.password = password
 		
-	def login(self):
+	def login(self, is_force=False):
 		try:
+			force = '/force' if is_force == True else ''
+			self.username = self.username + force
+			
 			response = self.request.post(self.url + '/login', data = {'username': self.username, 'password': self.password})
 			result = response.text
 			
@@ -70,17 +75,42 @@ class GTASSModel():
 			matches = matches.lower()
 			matches = matches.replace('.', '')
 			
-			if matches == 'this user is logged on':
-				self.forcelogin
+			file_name = 'GTASSLogin.html'
 			
-			fo = open('log/gtass_login.html', 'w')
+			if matches == 'this user is logged on':
+				self.login(is_force=True)
+				file_name = 'GTASSForceLogin.html'
+			
+			fo = open('log/' + file_name, 'w')
 			fo.write(result)
 			fo.close()
 		except:
 			result = 'login failed !'
 			
-			fo = open('log/gtass_login.html', 'w')
+			fo = open('log/GTASSLogin.html', 'w')
 			fo.write(result)
 			fo.close()
 		
-		return False
+		return
+	
+	def logout(self):
+		response = self.request.get(self.url + '/logout', data = {})
+		result = response.text
+		
+		fo = open('log/GTASSLogout.html', 'w')
+		fo.write(result)
+		fo.close()
+		
+		return
+	
+	def getCustomer(self):
+		response = self.request.post(self.url + '/api/customer/list', data = {'search': '', 'take': 50, 'skip': 0, 'page': 1, 'pageSize': 50})
+		result = response.text
+		return result
+		result = json.dumps(result)
+		
+		fo = open('log/GTASSCustomerList.html', 'w')
+		fo.write(result)
+		fo.close()
+		
+		return

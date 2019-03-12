@@ -75,8 +75,10 @@ if confirm == 'Y' or confirm == 'y':
 	params = json.loads(config[0])
 	
 	gtass = GTASSModel(params['url'], params['username'], params['password'])
-	gtass_login = gtass.login()
-	print(gtass_login)
+	gtass_login = gtass.login(is_force=False)
+	gtass.logout()
+	customer = gtass.getCustomer()
+	print(customer)
 	
 	print('running')
 else :
