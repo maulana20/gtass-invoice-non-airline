@@ -57,21 +57,25 @@ class GTASSModel():
 		self.username = username
 		self.password = password
 		
-		self.login()
-	
 	def login(self):
 		try:
 			response = self.request.post(self.url + '/login', data = {'username': self.username, 'password': self.password})
 			result = response.text
 			
-			# bs = BeautifulSoup(result.read(), 'html.parser')
-			# body = bs.find('li')
+			bs = BeautifulSoup(result, 'html.parser')
+			body = bs.find('li')
+			body = str(body)
+			body = body[(body.find(">") + 1):]
+			matches = body[:body.find("<")]
+			matches = matches.lower()
+			matches = matches.replace('.', '')
+			
+			if matches == 'this user is logged on':
+				self.forcelogin
 			
 			fo = open('log/gtass_login.html', 'w')
 			fo.write(result)
 			fo.close()
-			
-			# return body
 		except:
 			result = 'login failed !'
 			
