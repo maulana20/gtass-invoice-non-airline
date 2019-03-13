@@ -80,6 +80,24 @@ if confirm == 'Y' or confirm == 'y':
 	gtass_login = gtass.login(is_force=False)
 	customer = gtass.getCustomer()
 	
+	customer_code = input('Masukan Code Customer (AGENT VERSA OR MITRA)\n')
+	if not customer_code:
+		print('result : Code Customer kosong !')
+		gtass.logout()
+		sys.exit()
+	
+	if len(customer_code) != 8:
+		print('result : Code Customer harus sesuai (8 karakter) !')
+		gtass.logout()
+		sys.exit()
+	
+	customer_data = gtass.getCustomerData(customer_code)
+	
+	if not customer_data or 'code' not in customer_data:
+		print('result : Code Customer tidak ada !')
+		gtass.logout()
+		sys.exit()
+	
 	supplier_code = input('Masukan Code Supplier\n')
 	if not supplier_code:
 		print('result : Code Supplier kosong !')
@@ -185,12 +203,13 @@ if confirm == 'Y' or confirm == 'y':
 				time.sleep(5)
 			else:
 				is_already_tiket = True
-				is_already_tiket = gtass.isAlreadyResTicket(params['issued_date'], params['booking_code'])
+				is_already_tiket = gtass.isAlreadyResTicketTrain(params['issued_date'], params['booking_code'])
 				
 				if is_already_tiket == True:
 					result = ('|'.join(data)) + ' Is Already Ticket'
 					time.sleep(5)
 				else:
+					gtass.addReservationTicketTrain(params)
 					result = ('|'.join(data)) + ' Done'
 					time.sleep(5)
 		
