@@ -1,6 +1,7 @@
 import os
 import sys
 import json
+import time
 
 from models import PExcelModel, GTASSModel
 from datetime import datetime
@@ -109,6 +110,7 @@ if confirm == 'Y' or confirm == 'y':
 		if konsorsium_choice == 1:
 			if list['Airline'] != 'Trigana API':
 				result = ('|'.join(data)) + '(' + konsorsium_name + ') Must Trigana API in column airline'
+				time.sleep(5)
 			else:
 				valid = True
 		
@@ -180,8 +182,17 @@ if confirm == 'Y' or confirm == 'y':
 			
 			if is_already_invoice == True:
 				result = ('|'.join(data)) + ' Is Already Invoice'
+				time.sleep(5)
 			else:
-				result = ('|'.join(data)) + ' Done'
+				is_already_tiket = True
+				is_already_tiket = gtass.isAlreadyResTicket(params['issued_date'], params['booking_code'])
+				
+				if is_already_tiket == True:
+					result = ('|'.join(data)) + ' Is Already Ticket'
+					time.sleep(5)
+				else:
+					result = ('|'.join(data)) + ' Done'
+					time.sleep(5)
 		
 		print(result)
 	
