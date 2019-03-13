@@ -106,7 +106,6 @@ class GTASSModel():
 	def getCustomer(self):
 		response = self.request.post(self.url + '/api/customer/list', data = {'search': '', 'take': 50, 'skip': 0, 'page': 1, 'pageSize': 50})
 		result = response.text
-		return result
 		result = json.dumps(result)
 		
 		fo = open('log/GTASSCustomerList.html', 'w')
@@ -114,3 +113,16 @@ class GTASSModel():
 		fo.close()
 		
 		return
+	
+	def getSupplierData(self, supplier_code):
+		response = self.request.post(self.url + '/api/supplier/list', data = {'search': 'S00008', 'take': 50, 'skip': 0, 'page': 1, 'pageSize': 50})
+		result = response.text
+		
+		fo = open('log/GTASSupplierData.html', 'w')
+		fo.write(json.dumps(result))
+		fo.close()
+		
+		res = []
+		res = json.loads(result)
+		print(type(res))
+		return res['data'][0]
