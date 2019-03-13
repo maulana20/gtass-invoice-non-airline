@@ -98,6 +98,8 @@ if confirm == 'Y' or confirm == 'y':
 		sys.exit()
 	
 	for list in record:
+		result = ''
+		
 		data = []
 		for i in title:
 			data.append(str(list[i]))
@@ -106,7 +108,7 @@ if confirm == 'Y' or confirm == 'y':
 		
 		if konsorsium_choice == 1:
 			if list['Airline'] != 'Trigana API':
-				print(('|'.join(data)) + '(' + konsorsium_name + ') Must Trigana API in column airline')
+				result = ('|'.join(data)) + '(' + konsorsium_name + ') Must Trigana API in column airline'
 			else:
 				valid = True
 		
@@ -173,9 +175,15 @@ if confirm == 'Y' or confirm == 'y':
 			remark1 = params['booking_code'] + ' ' + konsorsium_name + ' ' + params['ticket_number']
 			remark1 = remark1[:100]
 			
-			print(params, remark1)
+			is_already_invoice = True
+			is_already_invoice = gtass.isAlreadyInvoice(params['issued_date'], remark1)
 			
-		print(data)
+			if is_already_invoice == True:
+				result = ('|'.join(data)) + ' Is Already Invoice'
+			else:
+				result = ('|'.join(data)) + ' Done'
+		
+		print(result)
 	
 	print('running')
 	gtass.logout()

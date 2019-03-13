@@ -122,7 +122,24 @@ class GTASSModel():
 		fo.write(json.dumps(result))
 		fo.close()
 		
-		res = []
 		res = json.loads(result)
-		print(type(res))
 		return res['data'][0]
+	
+	def isAlreadyInvoice(self, date, remark1):
+		date_time = datetime.fromtimestamp(date)
+		date_time = date_time.strftime('%d %b %Y')
+		print(date_time)
+
+		response = self.request.post(self.url + '/api/supplier/list', data = {'search': date_time, 'take': 10, 'skip': 0, 'page': 1, 'pageSize': 100, 'voidStatus': False})
+		result = response.text
+		
+		fo = open('log/GTASSReservationTicketList.html', 'w')
+		fo.write(json.dumps(result))
+		fo.close()
+		
+		res = json.loads(result)
+		for data in res['data']:
+			if data['remark1'] == remark1:
+				return True
+		
+		return False
