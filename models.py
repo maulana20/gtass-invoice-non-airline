@@ -186,29 +186,29 @@ class GTASSModel():
 		issued_date = datetime.fromtimestamp(res['issued_date'])
 		issued_date = issued_date.strftime('%Y-%m-%d')
 		
-		json_data = {
-			'act': 'add',
-			'adtQty': res['qty'],
-			'airCode': res['air_code'],
-			'bookBy': 'M0003',
-			'bookCode': res['booking_code'],
-			'bookDate': booking_date,
-			'chdQty': 0,
-			'currCode': 'IDR',
-			'dom': 1,
-			'infQty': 0,
-			'issuedBy': 'M0003',
-			'issuedDate': issued_date,
-			'locationId': 1,
-			'oneWay': res['oneway'],
-			'referral': 'tickettrain-trans',
-			'supCode': res['supplier_data']['code'],
-			'tourCode': '',
-			'type': 'DS'
+		payload = {
+			"act": "add",
+			"adtQty": res['qty'],
+			"airCode": res['air_code'],
+			"bookBy": "M0003",
+			"bookCode": res['booking_code'],
+			"bookDate": booking_date,
+			"chdQty": 0,
+			"currCode": "IDR",
+			"dom": 1,
+			"infQty": 0,
+			"issuedBy": "M0003",
+			"issuedDate": issued_date,
+			"locationId": 1,
+			"oneWay": res['oneway'],
+			"referral": 'tickettrain-trans',
+			"supCode": res['supplier_data']['code'],
+			"tourCode": "",
+			"type": "LG" # DS / LG
 		}
-		print(json_data)
+		print(json.dumps(payload))
 		
-		response = self.request.post(self.url + '/api/tickettrain-trans/update?act=add', json = json_data)
+		response = self.request.post(self.url + '/api/tickettrain-trans/update?act=add', json=payload, headers={"Content-Type" : "application/json"})
 		result = response.text
 		
 		fo = open('log/GTASSReservationTicketTrainAdd.html', 'w')
@@ -218,11 +218,11 @@ class GTASSModel():
 		_res = json.loads(result)
 		if _res['success'] != True:
 			fo = open('log/gtass_error.txt', 'a')
-			fo.write('input tiket' + _res['message'])
+			fo.write('input tiket' + _res['message'] + '\n')
 			fo.close()
 		else:
 			fo = open('log/gtass_success.txt', 'a')
-			fo.write('input tiket' + _res['message'])
+			fo.write('input tiket' + _res['message'] + '\n')
 			fo.close()
 		
 		ticket_code = _res['data']['id'];
@@ -236,24 +236,23 @@ class GTASSModel():
 		time_arrive = datetime.fromtimestamp(res['schedule']['time_arrive'])
 		time_arrive = time_arrive.strftime('%H:%M')
 		
-		json_data = {
-			'act': 'add',
-			'depAirport': res['schedule']['city_depart'],
-			'arrAirport': res['schedule']['city_arrive'],
-			'depTime': time_depart,
-			'arrTime': time_arrive,
-			'classCode': res['schedule']['class_code'],
-			'classType': res['schedule']['class_type'],
-			'flightDate': flight_date,
-			'flightNo': res['schedule']['flight_code'],
-			'id': ticket_code,
-			'idc': ticket_code,
-			'locId': 1,
-			'referral': 'tickettrain-trans'
+		payload = {
+			"act": "add",
+			"depAirport": res['schedule']['city_depart'],
+			"arrAirport": res['schedule']['city_arrive'],
+			"depTime": time_depart,
+			"arrTime": time_arrive,
+			"classCode": res['schedule']['class_code'],
+			"classType": res['schedule']['class_type'],
+			"flightDate": flight_date,
+			"flightNo": res['schedule']['flight_code'],
+			"id": ticket_code,
+			"idc": ticket_code,
+			"locId": 1,
+			"referral": "tickettrain-trans"
 		}
-		print(json_data)
 		
-		response = self.request.post(self.url + '/api/tickettrain-trans/updateroute?act=add', json = json_data)
+		response = self.request.post(self.url + '/api/tickettrain-trans/updateroute?act=add', json=payload, headers={"Content-Type" : "application/json"})
 		result = response.text
 		
 		fo = open('log/GTASSReservationTicketTrainSchedule.html', 'w')
@@ -263,14 +262,14 @@ class GTASSModel():
 		_res = json.loads(result)
 		if _res['success'] != True:
 			fo = open('log/gtass_error.txt', 'a')
-			fo.write('input schedule ' + _res['message'])
+			fo.write('input schedule ' + _res['message'] + '\n')
 			fo.close()
 		else:
 			fo = open('log/gtass_success.txt', 'a')
-			fo.write('input schedule ' + _res['message'])
+			fo.write('input schedule ' + _res['message'] + '\n')
 			fo.close()
 		
-		json_data = {
+		payload = {
 			'act': 'add',
 			'id': ticket_code,
 			'basicFare': res['fare']['basic'],
@@ -308,9 +307,8 @@ class GTASSModel():
 			'referral': 'tickettrain-trans',
 			'tourCode': ''
 		}
-		print(json_data)
 		
-		response = self.request.post(self.url + '/api/tickettrain-trans/updatedetail?act=add', json = json_data)
+		response = self.request.post(self.url + '/api/tickettrain-trans/updatedetail?act=add', json=payload, headers={"Content-Type" : "application/json"})
 		result = response.text
 		
 		fo = open('log/GTASSReservationTicketTrainPrice.html', 'w')
@@ -320,12 +318,14 @@ class GTASSModel():
 		_res = json.loads(result)
 		if _res['success'] != True:
 			fo = open('log/gtass_error.txt', 'a')
-			fo.write('input tiket ' + _res['message'])
+			fo.write('input tiket ' + _res['message'] + '\n')
 			fo.close()
 		else:
 			fo = open('log/gtass_success.txt', 'a')
-			fo.write('input tiket ' + _res['message'])
+			fo.write('input tiket ' + _res['message'] + '\n')
 			fo.close()
+			
+		return False
 	
 	def addInvoice(self, res, customer_data, remark1):
 		response = self.request.post(self.url + '/api/invoice/list', data = {'search': '', 'take': 50, 'skip': 0, 'page': 1, 'pageSize': 50})
@@ -366,7 +366,7 @@ class GTASSModel():
 			'tourCode': '' #MANDATORY
 		}
 		
-		response = self.request.post(self.url + '/api/tickettrain-trans/updatedetail?act=add', json = json_data)
+		response = self.request.post(self.url + '/api/tickettrain-trans/updatedetail?act=add', json = json_data, headers={"Content-Type" : "application/json"})
 		result = response.text
 		
 		fo = open('log/GTASSInvoiceGeneralAdd.html', 'w')
@@ -376,11 +376,11 @@ class GTASSModel():
 		_res = json.loads(result)
 		if _res['success'] != True:
 			fo = open('log/gtass_error.txt', 'a')
-			fo.write('input invoice ' + _res['message'])
+			fo.write('input invoice ' + _res['message'] + '\n')
 			fo.close()
 		else:
 			fo = open('log/gtass_success.txt', 'a')
-			fo.write('input invoice ' + _res['message'])
+			fo.write('input invoice ' + _res['message'] + '\n')
 			fo.close()
 			
 		invoice_code = _res['data']['code']
@@ -420,9 +420,9 @@ class GTASSModel():
 		_res = json.loads(result)
 		if _res['success'] != True:
 			fo = open('log/gtass_error.txt', 'a')
-			fo.write('include ticket ' + _res['message'])
+			fo.write('include ticket ' + _res['message'] + '\n')
 			fo.close()
 		else:
 			fo = open('log/gtass_success.txt', 'a')
-			fo.write('include ticket ' + _res['message'])
+			fo.write('include ticket ' + _res['message'] + '\n')
 			fo.close()

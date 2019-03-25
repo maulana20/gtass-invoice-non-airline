@@ -126,8 +126,8 @@ if confirm == 'Y' or confirm == 'y':
 		valid = False
 		
 		if konsorsium_choice == 1:
-			if list['Airline'] != 'Trigana API':
-				result = ('|'.join(data)) + '(' + konsorsium_name + ') Must Trigana API in column airline'
+			if list['Airline'] != 'KAI':
+				result = ('|'.join(data)) + '(' + konsorsium_name + ') Must KAI in column airline'
 				time.sleep(5)
 			else:
 				valid = True
